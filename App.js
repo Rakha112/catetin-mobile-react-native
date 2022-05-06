@@ -9,6 +9,8 @@ import WelcomePage from './src/screen/WelcomePage';
 import LoginPage from './src/screen/LoginPage';
 import SignupPage from './src/screen/SignupPage';
 import HomePage from './src/screen/HomePage';
+import NewNotePage from './src/screen/NewNotePage';
+import NotePage from './src/screen/NotePage';
 
 const App = () => {
   const Stack = createStackNavigator();
@@ -46,6 +48,8 @@ const App = () => {
           <Stack.Screen name="Login" component={LoginPage} />
           <Stack.Screen name="Signup" component={SignupPage} />
           <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen name="Note" component={NotePage} />
+          <Stack.Screen name="NewNote" component={NewNotePage} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

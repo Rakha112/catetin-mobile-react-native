@@ -14,6 +14,7 @@ import ListNote from '../components/ListNote';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import LogOutIcon from '../assets/images/log-out-svgrepo-com.svg';
 import Ripple from 'react-native-material-ripple';
+import ButtonNewNote from '../components/ButtonNewNote';
 const HomePage = () => {
   const bottomSheetRef = useRef(null);
   const renderBackdrop = useCallback(
@@ -42,7 +43,7 @@ const HomePage = () => {
           <Dot width={25} height={25} fill={'black'} />
         </Ripple>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ListNote />
         <ListNote />
         <ListNote />
@@ -59,13 +60,14 @@ const HomePage = () => {
         <ListNote />
         <ListNote />
       </ScrollView>
+      <ButtonNewNote />
       <BottomSheet
         enablePanDownToClose={true}
         index={-1}
         ref={bottomSheetRef}
-        snapPoints={[200, 200]}
+        snapPoints={[100, 100]}
         backdropComponent={renderBackdrop}>
-        <View style={styles.borromSheetContainer}>
+        <View style={styles.bottomSheetContainer}>
           <Ripple style={styles.tombol}>
             <LogOutIcon width={40} height={40} style={{marginHorizontal: 20}} />
             <Text
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
     padding: 5,
     overflow: 'hidden',
   },
-  borromSheetContainer: {
+  bottomSheetContainer: {
     flex: 1,
   },
   tombol: {
