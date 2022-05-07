@@ -2,18 +2,18 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import NoteIcon from '../assets/images/note.svg';
 import {useNavigation} from '@react-navigation/native';
-const ListNote = () => {
+const ListNote = ({judul, isi}) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       style={styles.container}
       activeOpacity={0.5}
-      onPress={() => navigation.push('Note')}>
+      onPress={() => navigation.push('Note', {judul: judul, isi: isi})}>
       <View style={styles.iconContainer}>
         <NoteIcon width={40} height={40} fill={'black'} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>ListNote</Text>
+        <Text style={styles.text}>{judul}</Text>
       </View>
     </TouchableOpacity>
   );

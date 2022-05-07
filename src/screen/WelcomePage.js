@@ -9,8 +9,17 @@ import {
 } from 'react-native';
 import React from 'react';
 import Button from '../components/Button';
-
+import {useNavigation} from '@react-navigation/native';
+import {connect} from 'react-redux';
 const WelcomePage = () => {
+  const navigation = useNavigation();
+  const loginHandle = () => {
+    navigation.push('Login');
+  };
+  const signupHandle = () => {
+    navigation.push('Signup');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -22,13 +31,28 @@ const WelcomePage = () => {
         Applikasi untuk menulis dan mencatat apapun yang ingin anda tulis dan
         catat
       </Text>
-      <Button text={'Sign Up'} bgColor={'black'} textColor={'white'} />
-      <Button text={'Log In'} bgColor={'#F5F5F5'} textColor={'black'} />
+      <Button
+        text={'Sign Up'}
+        bgColor={'black'}
+        textColor={'white'}
+        submit={signupHandle}
+      />
+      <Button
+        text={'Log In'}
+        bgColor={'#F5F5F5'}
+        textColor={'black'}
+        submit={loginHandle}
+      />
     </SafeAreaView>
   );
 };
 
-export default WelcomePage;
+const mapStateToProps = state => {
+  return {
+    loggedin: state.loggedin,
+  };
+};
+export default connect(mapStateToProps)(WelcomePage);
 
 const styles = StyleSheet.create({
   container: {

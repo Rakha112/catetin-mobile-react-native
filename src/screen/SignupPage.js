@@ -9,14 +9,27 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';
 import {useNavigation} from '@react-navigation/native';
 import Button from '../components/Button';
+import Toast from 'react-native-toast-message';
 const SignupPage = () => {
   const navigation = useNavigation();
+  const passwordRef = useRef(null);
   const [usernameFocus, setUsernameFocus] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const submitHandle = () => {
+    if (username === '' || password === '') {
+      Toast.show({
+        type: 'gagal',
+        text1: 'Username dan password tidak boleh kosong',
+        visibilityTime: 2000,
+      });
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -44,25 +57,36 @@ const SignupPage = () => {
           <View style={[styles.alignBaseline, {marginBottom: 20}]}>
             <Text style={styles.inputLabel}>Username</Text>
             <TextInput
+              blurOnSubmit={false}
               placeholder="Masukkan Username..."
               style={[
                 styles.input,
                 usernameFocus ? {borderColor: 'black'} : {},
               ]}
+              autoCapitalize="none"
               onFocus={() => setUsernameFocus(true)}
               onBlur={() => setUsernameFocus(false)}
+              onChangeText={e => setUsername(e)}
+              onSubmitEditing={() => passwordRef.current.focus()}
             />
           </View>
           <View style={styles.alignBaseline}>
             <Text style={styles.inputLabel}>Password</Text>
             <TextInput
+              ref={passwordRef}
               placeholder="Masukkan Password..."
               style={[
                 styles.input,
                 passwordFocus ? {borderColor: 'black'} : {},
               ]}
+              secureTextEntry={true}
+              autoCapitalize="none"
               onFocus={() => setPasswordFocus(true)}
               onBlur={() => setPasswordFocus(false)}
+              onChangeText={e => setPassword(e)}
+              onSubmitEditing={() => {
+                submitHandle();
+              }}
             />
           </View>
         </View>

@@ -17,11 +17,15 @@ import {useNavigation} from '@react-navigation/native';
 import EditIcon from '../assets/images/edit-svgrepo-com.svg';
 import DeleteIcon from '../assets/images/trash-alt-delete-bin-svgrepo-com.svg';
 import SaveIcon from '../assets/images/save-svgrepo-com.svg';
-const NotePage = () => {
+import axios from 'axios';
+import * as Keychain from 'react-native-keychain';
+import {connect} from 'react-redux';
+const NotePage = ({route, setRefresh}) => {
   const navigaton = useNavigation();
   const bottomSheetRef = useRef(null);
   const isiRef = useRef(null);
   const [editable, setEditable] = useState(false);
+  const [isiBaru, setIsiBaru] = useState('');
   const renderBackdrop = useCallback(
     props => (
       <BottomSheetBackdrop
@@ -32,22 +36,52 @@ const NotePage = () => {
     ),
     [],
   );
-  const coba = () => {
-    <Ripple
-      style={styles.tombol}
-      onPress={() => {
-        setEditable(true);
-        bottomSheetRef.current.close();
-      }}>
-      <SaveIcon
-        width={30}
-        height={30}
-        fill={'black'}
-        style={{marginHorizontal: 20}}
-      />
-      <Text style={styles.textButton}>Save</Text>
-    </Ripple>;
+
+  const getToken = async () => {
+    const credentials = await Keychain.getInternetCredentials('token');
+    if (credentials) {
+      console.log(
+        'Credentials successfully loaded for user ' + credentials.username,
+      );
+    } else {
+      console.log('No credentials stored');
+    }
+    return credentials;
   };
+
+  const editHandle = () => {
+    getToken().then(res => {
+      console.log(res);
+      axios
+        .put('https://catetinnote.herokuapp.com/note/update', {
+          judul: route.params.judul,
+          isi: isiBaru,
+          user: res.username,
+          token: res.password,
+        })
+        .then(res => setRefresh(true));
+    });
+  };
+
+  const deleteHandle = () => {
+    getToken().then(res => {
+      console.log(res);
+      axios
+        .delete('https://catetinnote.herokuapp.com/note/delete', {
+          data: {
+            judul: route.params.judul,
+            isi: route.params.isi,
+            user: res.username,
+            token: res.password,
+          },
+        })
+        .then(res => {
+          navigaton.pop();
+          setRefresh(true);
+        });
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -74,14 +108,15 @@ const NotePage = () => {
           styles.textInput,
           {borderBottomWidth: 1, borderBottomColor: 'grey', paddingBottom: 10},
         ]}>
-        Judul...
+        {route.params.judul}
       </Text>
       <TextInput
         editable={editable}
         ref={isiRef}
         placeholder="Isikan note di sini..."
-        defaultValue={'isi'}
+        defaultValue={route.params.isi}
         multiline={true}
+        onChangeText={e => setIsiBaru(e)}
         style={[
           styles.textInput,
           {textAlignVertical: 'top', maxHeight: '80%', height: '80%'},
@@ -100,6 +135,7 @@ const NotePage = () => {
               onPress={() => {
                 setEditable(false);
                 bottomSheetRef.current.close();
+                editHandle();
               }}>
               <SaveIcon
                 width={30}
@@ -125,7 +161,7 @@ const NotePage = () => {
               <Text style={styles.textButton}>Edit</Text>
             </Ripple>
           )}
-          <Ripple style={styles.tombol}>
+          <Ripple style={styles.tombol} onPress={() => deleteHandle()}>
             <DeleteIcon width={30} height={30} style={{marginHorizontal: 20}} />
             <Text style={styles.textButton}>Delete</Text>
           </Ripple>
@@ -135,7 +171,13 @@ const NotePage = () => {
   );
 };
 
-export default NotePage;
+const mapDispatchToProps = dispatch => {
+  return {
+    setRefresh: data => dispatch({type: 'REFRESH', payload: data}),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(NotePage);
 
 const styles = StyleSheet.create({
   container: {

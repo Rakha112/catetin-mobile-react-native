@@ -8,15 +8,23 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useRef, useEffect, useState} from 'react';
 import Dot from '../assets/images/three-dots-vertical-svgrepo-com.svg';
 import ListNote from '../components/ListNote';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import LogOutIcon from '../assets/images/log-out-svgrepo-com.svg';
 import Ripple from 'react-native-material-ripple';
 import ButtonNewNote from '../components/ButtonNewNote';
-const HomePage = () => {
+import * as Keychain from 'react-native-keychain';
+import axios from 'axios';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {connect} from 'react-redux';
+
+const HomePage = ({refresh, setRefresh}) => {
+  const navigation = useNavigation();
   const bottomSheetRef = useRef(null);
+  const [username, setUsername] = useState('');
+  const [data, setData] = useState();
   const renderBackdrop = useCallback(
     props => (
       <BottomSheetBackdrop
@@ -27,6 +35,58 @@ const HomePage = () => {
     ),
     [],
   );
+  const getToken = async () => {
+    const credentials = await Keychain.getInternetCredentials('token');
+    if (credentials) {
+      console.log(
+        'Credentials successfully loaded for user ' + credentials.username,
+      );
+    } else {
+      console.log('No credentials stored');
+    }
+    return credentials;
+  };
+
+  const getData = async (token, username) => {
+    const request = await axios.get('https://catetinnote.herokuapp.com/note', {
+      params: {
+        token: token,
+        user: username,
+      },
+    });
+    return request.data;
+  };
+
+  const logoutHandle = async () => {
+    await Keychain.resetInternetCredentials('token');
+    await Keychain.resetInternetCredentials('login');
+    await axios.get('https://catetinnote.herokuapp.com/logout').then(res => {
+      if (res.data.logout) {
+        navigation.replace('Welcome');
+      }
+    });
+  };
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     getToken().then(res => {
+  //       setUsername(res.username);
+  //       getData(res.password, res.username).then(res => setData(res));
+  //     });
+  //   }, []),
+  // );
+
+  useEffect(() => {
+    if (refresh) {
+      setRefresh(false);
+    } else {
+      getToken().then(res => {
+        setUsername(res.username);
+        getData(res.password, res.username).then(res => setData(res));
+      });
+    }
+  }, [refresh]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -35,7 +95,7 @@ const HomePage = () => {
             source={require('../assets/images/user.png')}
             style={styles.image}
           />
-          <Text style={styles.nama}>Rakha</Text>
+          <Text style={styles.nama}>{username}</Text>
         </View>
         <Ripple
           onPress={() => bottomSheetRef.current.expand()}
@@ -44,21 +104,11 @@ const HomePage = () => {
         </Ripple>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
-        <ListNote />
+        {data
+          ? data.map((data, key) => {
+              return <ListNote judul={data.judul} isi={data.isi} key={key} />;
+            })
+          : null}
       </ScrollView>
       <ButtonNewNote />
       <BottomSheet
@@ -68,7 +118,11 @@ const HomePage = () => {
         snapPoints={[100, 100]}
         backdropComponent={renderBackdrop}>
         <View style={styles.bottomSheetContainer}>
-          <Ripple style={styles.tombol}>
+          <Ripple
+            style={styles.tombol}
+            onPress={() => {
+              logoutHandle();
+            }}>
             <LogOutIcon width={40} height={40} style={{marginHorizontal: 20}} />
             <Text
               style={{
@@ -84,8 +138,18 @@ const HomePage = () => {
     </SafeAreaView>
   );
 };
+const mapStateToProps = state => {
+  return {
+    refresh: state.refresh,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    setRefresh: data => dispatch({type: 'REFRESH', payload: data}),
+  };
+};
 
-export default HomePage;
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
 
 const styles = StyleSheet.create({
   container: {

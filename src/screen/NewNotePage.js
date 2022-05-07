@@ -15,13 +15,17 @@ import Ripple from 'react-native-material-ripple';
 import {useNavigation} from '@react-navigation/native';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import SaveIcon from '../assets/images/save-svgrepo-com.svg';
-
-const NewNotePage = () => {
+import * as Keychain from 'react-native-keychain';
+import axios from 'axios';
+import {connect} from 'react-redux';
+const NewNotePage = ({setRefresh}) => {
   const navigaton = useNavigation();
   const bottomSheetRef = useRef(null);
   const judulRef = useRef(null);
   const isiRef = useRef(null);
   const [judulFocus, setJudulFocus] = useState(false);
+  const [judul, setJudul] = useState('');
+  const [isi, setIsi] = useState('');
   const renderBackdrop = useCallback(
     props => (
       <BottomSheetBackdrop
@@ -32,6 +36,34 @@ const NewNotePage = () => {
     ),
     [],
   );
+  const getToken = async () => {
+    const credentials = await Keychain.getInternetCredentials('token');
+    if (credentials) {
+      console.log(
+        'Credentials successfully loaded for user ' + credentials.username,
+      );
+    } else {
+      console.log('No credentials stored');
+    }
+    return credentials;
+  };
+
+  const newHandle = () => {
+    getToken().then(res => {
+      console.log(res);
+      axios
+        .post('https://catetinnote.herokuapp.com/note/insert', {
+          judul: judul,
+          isi: isi,
+          user: res.username,
+          token: res.password,
+        })
+        .then(res => {
+          navigaton.pop();
+          setRefresh(true);
+        });
+    });
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -59,6 +91,7 @@ const NewNotePage = () => {
         ref={judulRef}
         onFocus={() => setJudulFocus(true)}
         onBlur={() => setJudulFocus(false)}
+        onChangeText={e => setJudul(e)}
         style={[
           styles.textInput,
           {borderBottomColor: 'grey', borderBottomWidth: 1},
@@ -70,6 +103,7 @@ const NewNotePage = () => {
         ref={isiRef}
         placeholder="Isikan note di sini..."
         multiline={true}
+        onChangeText={e => setIsi(e)}
         style={[
           styles.textInput,
           {textAlignVertical: 'top', maxHeight: '80%', height: '80%'},
@@ -82,7 +116,7 @@ const NewNotePage = () => {
         snapPoints={[100, 100]}
         backdropComponent={renderBackdrop}>
         <View style={styles.bottomSheetContainer}>
-          <Ripple style={styles.tombol}>
+          <Ripple style={styles.tombol} onPress={() => newHandle()}>
             <SaveIcon
               width={30}
               height={30}
@@ -97,7 +131,13 @@ const NewNotePage = () => {
   );
 };
 
-export default NewNotePage;
+const mapDispatchToProps = dispatch => {
+  return {
+    setRefresh: data => dispatch({type: 'REFRESH', payload: data}),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(NewNotePage);
 
 const styles = StyleSheet.create({
   container: {

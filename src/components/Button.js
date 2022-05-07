@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import Ripple from 'react-native-material-ripple';
-const Button = ({text, bgColor, textColor}) => {
+const Button = ({text, bgColor, textColor, submit}) => {
   const navigation = useNavigation();
   return (
     <Ripple
@@ -16,13 +16,7 @@ const Button = ({text, bgColor, textColor}) => {
       style={[styles.container, {backgroundColor: bgColor}]}
       activeOpacity={0.5}
       onPress={() => {
-        if (text === 'Log In') {
-          console.log('LOGIN');
-          navigation.push('Login');
-        } else {
-          console.log('SIGNUP');
-          navigation.push('Signup');
-        }
+        submit();
       }}>
       {/* <View > */}
       <Text style={[styles.text, {color: textColor}]}>{text}</Text>
