@@ -30,9 +30,6 @@ const LoginPage = ({setUsernameGlobal}) => {
   const storeToken = async (username, token) => {
     await Keychain.setInternetCredentials('token', username, token);
   };
-  const storeLogin = async () => {
-    await Keychain.setInternetCredentials('login', 'login', 'true');
-  };
 
   const getToken = async () => {
     try {
@@ -76,7 +73,6 @@ const LoginPage = ({setUsernameGlobal}) => {
             });
             setUsernameGlobal(username);
             storeToken(username, response.data.token);
-            storeLogin();
             navigation.reset({
               index: 0,
               routes: [{name: 'Home'}],

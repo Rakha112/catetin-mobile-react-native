@@ -7,6 +7,8 @@ import {
   StatusBar,
   Image,
   ScrollView,
+  Alert,
+  RefreshControl,
 } from 'react-native';
 import React, {useCallback, useRef, useEffect, useState} from 'react';
 import Dot from '../assets/images/three-dots-vertical-svgrepo-com.svg';
@@ -19,12 +21,14 @@ import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {connect} from 'react-redux';
-
+import Skeleton from '../components/Skeleton';
 const HomePage = ({refresh, setRefresh}) => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef(null);
   const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const renderBackdrop = useCallback(
     props => (
       <BottomSheetBackdrop
@@ -59,11 +63,20 @@ const HomePage = ({refresh, setRefresh}) => {
 
   const logoutHandle = async () => {
     await Keychain.resetInternetCredentials('token');
-    await Keychain.resetInternetCredentials('login');
     await axios.get('https://catetinnote.herokuapp.com/logout').then(res => {
       if (res.data.logout) {
         navigation.replace('Welcome');
       }
+    });
+  };
+
+  const refreshHandle = () => {
+    getToken().then(res => {
+      setUsername(res.username);
+      getData(res.password, res.username).then(res => {
+        setData(res);
+        setRefresh(false);
+      });
     });
   };
 
@@ -82,10 +95,26 @@ const HomePage = ({refresh, setRefresh}) => {
     } else {
       getToken().then(res => {
         setUsername(res.username);
-        getData(res.password, res.username).then(res => setData(res));
+        getData(res.password, res.username).then(res => {
+          setData(res);
+          setLoading(true);
+        });
       });
     }
   }, [refresh]);
+
+  const createAlertLogOut = () =>
+    Alert.alert('Log Out', 'Apakah anda yakin akan Log Out ?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          logoutHandle();
+        },
+      },
+    ]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,12 +132,27 @@ const HomePage = ({refresh, setRefresh}) => {
           <Dot width={25} height={25} fill={'black'} />
         </Ripple>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {data
-          ? data.map((data, key) => {
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => refreshHandle()}
+          />
+        }>
+        {loading ? (
+          data.length > 0 ? (
+            data.map((data, key) => {
               return <ListNote judul={data.judul} isi={data.isi} key={key} />;
             })
-          : null}
+          ) : (
+            <View style={{alignItems: 'center'}}>
+              <Text style={styles.nama}>Belum ada Catatan...</Text>
+            </View>
+          )
+        ) : (
+          <Skeleton />
+        )}
       </ScrollView>
       <ButtonNewNote />
       <BottomSheet
@@ -121,7 +165,7 @@ const HomePage = ({refresh, setRefresh}) => {
           <Ripple
             style={styles.tombol}
             onPress={() => {
-              logoutHandle();
+              createAlertLogOut();
             }}>
             <LogOutIcon width={40} height={40} style={{marginHorizontal: 20}} />
             <Text

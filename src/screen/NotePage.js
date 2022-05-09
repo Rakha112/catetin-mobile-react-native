@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   TextInput,
+  Alert,
 } from 'react-native';
 import React, {useRef, useCallback, useState} from 'react';
 import Ripple from 'react-native-material-ripple';
@@ -20,6 +21,7 @@ import SaveIcon from '../assets/images/save-svgrepo-com.svg';
 import axios from 'axios';
 import * as Keychain from 'react-native-keychain';
 import {connect} from 'react-redux';
+import Toast from 'react-native-toast-message';
 const NotePage = ({route, setRefresh}) => {
   const navigaton = useNavigation();
   const bottomSheetRef = useRef(null);
@@ -51,7 +53,6 @@ const NotePage = ({route, setRefresh}) => {
 
   const editHandle = () => {
     getToken().then(res => {
-      console.log(res);
       axios
         .put('https://catetinnote.herokuapp.com/note/update', {
           judul: route.params.judul,
@@ -59,13 +60,19 @@ const NotePage = ({route, setRefresh}) => {
           user: res.username,
           token: res.password,
         })
-        .then(res => setRefresh(true));
+        .then(() => {
+          setRefresh(true);
+          Toast.show({
+            type: 'sukses',
+            text1: 'Perubahan telah tersimpan',
+            visibilityTime: 2000,
+          });
+        });
     });
   };
 
   const deleteHandle = () => {
     getToken().then(res => {
-      console.log(res);
       axios
         .delete('https://catetinnote.herokuapp.com/note/delete', {
           data: {
@@ -75,20 +82,60 @@ const NotePage = ({route, setRefresh}) => {
             token: res.password,
           },
         })
-        .then(res => {
-          navigaton.pop();
+        .then(() => {
           setRefresh(true);
+          navigaton.pop();
+          Toast.show({
+            type: 'sukses',
+            text1: 'Catatan telah terhapus',
+            visibilityTime: 2000,
+          });
         });
     });
   };
+
+  const createSaveAlert = () =>
+    Alert.alert(
+      'Simpan Catatan',
+      'Anda belum menyimpan catatan anda. Simpan sebelum kembali ?',
+      [
+        {
+          text: 'Cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            setEditable(false);
+            editHandle();
+            navigaton.pop();
+          },
+        },
+      ],
+    );
+  const createDeleteAlert = () =>
+    Alert.alert('Hapus catatan', 'Apakah anda yakin akan menghapus catatan ?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          deleteHandle();
+        },
+      },
+    ]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableWithoutFeedback
           onPress={() => {
-            navigaton.pop();
-            isiRef.current.blur();
+            if (editable) {
+              createSaveAlert();
+            } else {
+              navigaton.pop();
+              isiRef.current.blur();
+            }
           }}>
           <View style={styles.arrow}>
             <Arrow width={20} height={20} fill={'#000000'} />
@@ -161,7 +208,11 @@ const NotePage = ({route, setRefresh}) => {
               <Text style={styles.textButton}>Edit</Text>
             </Ripple>
           )}
-          <Ripple style={styles.tombol} onPress={() => deleteHandle()}>
+          <Ripple
+            style={styles.tombol}
+            onPress={() => {
+              createDeleteAlert();
+            }}>
             <DeleteIcon width={30} height={30} style={{marginHorizontal: 20}} />
             <Text style={styles.textButton}>Delete</Text>
           </Ripple>

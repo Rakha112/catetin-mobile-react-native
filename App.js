@@ -14,6 +14,7 @@ import NotePage from './src/screen/NotePage';
 import CobaPage from './src/screen/CobaPage';
 import ToastComponent from './src/components/ToastComponent';
 import * as Keychain from 'react-native-keychain';
+import axios from 'axios';
 const App = () => {
   const Stack = createStackNavigator();
   const [loading, setLoading] = useState(false);
@@ -22,13 +23,27 @@ const App = () => {
     const getLogin = async () => {
       try {
         // Retrieve the credentials
-        const credentials = await Keychain.getInternetCredentials('login');
+        const credentials = await Keychain.getInternetCredentials('token');
         if (credentials) {
           console.log(
             'Credentials successfully loaded for user ' + credentials.username,
           );
-          setLogin(true);
-          setLoading(true);
+          axios
+            .get('https://catetinnote.herokuapp.com/profile', {
+              params: {
+                token: credentials.password,
+              },
+            })
+            .then(res => {
+              if (res.data.loggedIn) {
+                setLogin(true);
+                setLoading(true);
+              } else {
+                setLogin(false);
+                setLoading(true);
+                Keychain.resetInternetCredentials('token');
+              }
+            });
         } else {
           console.log('No credentials stored');
           setLogin(false);

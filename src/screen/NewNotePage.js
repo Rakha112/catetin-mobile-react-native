@@ -18,6 +18,7 @@ import SaveIcon from '../assets/images/save-svgrepo-com.svg';
 import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 import {connect} from 'react-redux';
+import Toast from 'react-native-toast-message';
 const NewNotePage = ({setRefresh}) => {
   const navigaton = useNavigation();
   const bottomSheetRef = useRef(null);
@@ -50,7 +51,6 @@ const NewNotePage = ({setRefresh}) => {
 
   const newHandle = () => {
     getToken().then(res => {
-      console.log(res);
       axios
         .post('https://catetinnote.herokuapp.com/note/insert', {
           judul: judul,
@@ -58,9 +58,14 @@ const NewNotePage = ({setRefresh}) => {
           user: res.username,
           token: res.password,
         })
-        .then(res => {
-          navigaton.pop();
+        .then(() => {
           setRefresh(true);
+          navigaton.pop();
+          Toast.show({
+            type: 'sukses',
+            text1: 'Catatan telah ditambahkan',
+            visibilityTime: 2000,
+          });
         });
     });
   };
@@ -116,7 +121,17 @@ const NewNotePage = ({setRefresh}) => {
         snapPoints={[100, 100]}
         backdropComponent={renderBackdrop}>
         <View style={styles.bottomSheetContainer}>
-          <Ripple style={styles.tombol} onPress={() => newHandle()}>
+          <Ripple
+            style={styles.tombol}
+            onPress={() => {
+              isi !== '' && judul !== ''
+                ? newHandle()
+                : Toast.show({
+                    type: 'gagal',
+                    text1: 'Judul dan isi note tidak boleh kosong',
+                    visibilityTime: 2000,
+                  });
+            }}>
             <SaveIcon
               width={30}
               height={30}
