@@ -7,13 +7,13 @@ import {
   StatusBar,
   TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';
 import {useNavigation} from '@react-navigation/native';
 import Button from '../components/Button';
 import Toast from 'react-native-toast-message';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const SignupPage = () => {
   const navigation = useNavigation();
   const passwordRef = useRef(null);
@@ -32,24 +32,16 @@ const SignupPage = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        enabled={false}>
-        <View style={[styles.alignBaseline, {paddingVertical: 10}]}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.pop();
-            }}
-            style={styles.touch}>
-            <Arrow
-              width={25}
-              height={25}
-              style={styles.arrow}
-              fill={'#000000'}
-            />
-          </TouchableOpacity>
-        </View>
+      <View style={[styles.alignBaseline, {paddingVertical: 10}]}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.pop();
+          }}
+          style={styles.touch}>
+          <Arrow width={25} height={25} style={styles.arrow} fill={'#000000'} />
+        </TouchableOpacity>
+      </View>
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.atas}>
           <Text style={styles.text}>Sign Up</Text>
         </View>
@@ -103,7 +95,7 @@ const SignupPage = () => {
             </Text>
           </Text>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
@@ -124,10 +116,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  atas: {justifyContent: 'center', alignItems: 'center', flex: 2},
+  atas: {justifyContent: 'center', alignItems: 'center', height: 200},
   form: {
     alignItems: 'center',
-    flex: 2,
+    height: 400,
   },
   text: {
     fontFamily: 'Poppins-Bold',
@@ -138,6 +130,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 15,
     color: 'black',
+    marginBottom: 20,
   },
   textSpan: {fontFamily: 'Poppins-Bold'},
   inputLabel: {

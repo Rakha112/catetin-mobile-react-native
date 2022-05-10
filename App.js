@@ -15,6 +15,7 @@ import CobaPage from './src/screen/CobaPage';
 import ToastComponent from './src/components/ToastComponent';
 import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
+import SplashScreen from 'react-native-splash-screen';
 const App = () => {
   const Stack = createStackNavigator();
   const [loading, setLoading] = useState(false);
@@ -56,6 +57,9 @@ const App = () => {
       }
     };
     getLogin();
+    if (loading) {
+      SplashScreen.hide();
+    }
   }, []);
 
   const initialState = {
