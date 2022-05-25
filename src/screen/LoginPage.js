@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -7,7 +8,6 @@ import {
   StatusBar,
   TouchableOpacity,
   TextInput,
-  Dimensions,
 } from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';
@@ -19,12 +19,6 @@ import * as Keychain from 'react-native-keychain';
 import {connect} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const LoginPage = ({setUsernameGlobal}) => {
-  const {width, height} = Dimensions.get('window');
-  const actualDimensions = {
-    height: height < width ? width : height,
-    width: width > height ? height : width,
-  };
-
   const navigation = useNavigation();
   const passwordRef = useRef(null);
   const [usernameFocus, setUsernameFocus] = useState(false);
@@ -33,8 +27,8 @@ const LoginPage = ({setUsernameGlobal}) => {
   const [password, setPassword] = useState('');
   axios.defaults.withCredentials = true;
 
-  const storeToken = async (username, token) => {
-    await Keychain.setInternetCredentials('token', username, token);
+  const storeToken = async (username2, token) => {
+    await Keychain.setInternetCredentials('token', username2, token);
   };
 
   const getToken = async () => {
@@ -54,8 +48,6 @@ const LoginPage = ({setUsernameGlobal}) => {
   };
 
   useEffect(() => {
-    console.log(actualDimensions.width);
-    console.log(actualDimensions.height);
     getToken();
   }, []);
 

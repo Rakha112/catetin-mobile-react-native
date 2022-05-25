@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -19,15 +20,17 @@ import Ripple from 'react-native-material-ripple';
 import ButtonNewNote from '../components/ButtonNewNote';
 import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {connect} from 'react-redux';
 import Skeleton from '../components/Skeleton';
+
 const HomePage = ({refresh, setRefresh}) => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef(null);
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState();
+  // eslint-disable-next-line no-unused-vars
   const [refreshing, setRefreshing] = useState(false);
   const renderBackdrop = useCallback(
     props => (
@@ -51,11 +54,11 @@ const HomePage = ({refresh, setRefresh}) => {
     return credentials;
   };
 
-  const getData = async (token, username) => {
+  const getData = async (token, username2) => {
     const request = await axios.get('https://catetinnote.herokuapp.com/note', {
       params: {
         token: token,
-        user: username,
+        user: username2,
       },
     });
     return request.data;
@@ -73,8 +76,8 @@ const HomePage = ({refresh, setRefresh}) => {
   const refreshHandle = () => {
     getToken().then(res => {
       setUsername(res.username);
-      getData(res.password, res.username).then(res => {
-        setData(res);
+      getData(res.password, res.username).then(res2 => {
+        setData(res2);
         setRefresh(false);
       });
     });
@@ -95,12 +98,13 @@ const HomePage = ({refresh, setRefresh}) => {
     } else {
       getToken().then(res => {
         setUsername(res.username);
-        getData(res.password, res.username).then(res => {
-          setData(res);
+        getData(res.password, res.username).then(res2 => {
+          setData(res2);
           setLoading(true);
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   const createAlertLogOut = () =>
@@ -136,14 +140,20 @@ const HomePage = ({refresh, setRefresh}) => {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
             onRefresh={() => refreshHandle()}
+            refreshing={refreshing}
           />
         }>
         {loading ? (
           data.length > 0 ? (
-            data.map((data, key) => {
-              return <ListNote judul={data.judul} isi={data.isi} key={key} />;
+            data.map(data2 => {
+              return (
+                <ListNote
+                  judul={data2.judul}
+                  isi={data2.isi}
+                  key={data2.judul}
+                />
+              );
             })
           ) : (
             <View style={{alignItems: 'center'}}>

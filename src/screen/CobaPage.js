@@ -1,12 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   View,
-  KeyboardAvoidingView,
   TextInput,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
   StatusBar,
   SafeAreaView,
@@ -15,7 +13,9 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';
 import Button from '../components/Button';
+import {useNavigation} from '@react-navigation/native';
 const KeyboardAwareScrollViewComponent = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.alignBaseline, {paddingVertical: 10}]}>

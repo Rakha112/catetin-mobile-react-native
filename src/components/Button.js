@@ -1,27 +1,46 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  Easing,
+  withTiming,
+} from 'react-native-reanimated';
 import Ripple from 'react-native-material-ripple';
 const Button = ({text, bgColor, textColor, submit}) => {
-  const navigation = useNavigation();
+  const scaleValue = useSharedValue(1);
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withTiming(scaleValue.value, {
+            duration: 200,
+            easing: Easing.out(Easing.exp),
+          }),
+        },
+      ],
+    };
+  });
   return (
-    <Ripple
-      rippleColor={text === 'Sign Up' ? 'rgb(255,255,255)' : 'rgb(0, 0, 0)'}
-      style={[styles.container, {backgroundColor: bgColor}]}
-      activeOpacity={0.5}
-      onPress={() => {
-        submit();
-      }}>
-      {/* <View > */}
-      <Text style={[styles.text, {color: textColor}]}>{text}</Text>
-      {/* </View> */}
-    </Ripple>
+    <Animated.View style={animatedStyles}>
+      <Ripple
+        onPressIn={() => {
+          scaleValue.value = 0.95;
+        }}
+        onPressOut={() => {
+          scaleValue.value = 1;
+        }}
+        rippleColor={text === 'Sign Up' ? 'rgb(255,255,255)' : 'rgb(0, 0, 0)'}
+        style={[styles.container, {backgroundColor: bgColor}]}
+        activeOpacity={0.5}
+        onPress={() => {
+          submit();
+        }}>
+        {/* <View > */}
+        <Text style={[styles.text, {color: textColor}]}>{text}</Text>
+        {/* </View> */}
+      </Ripple>
+    </Animated.View>
   );
 };
 

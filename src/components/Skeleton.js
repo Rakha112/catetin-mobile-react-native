@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import ContentLoader, {Rect} from 'react-content-loader/native';
 const Skeleton = () => {
@@ -9,22 +9,22 @@ const Skeleton = () => {
   );
   return (
     <>
-      <View style={{height: 75, marginHorizontal: 20}}>
+      <View style={styles.container}>
         <MyLoader />
       </View>
-      <View style={{height: 75, marginHorizontal: 20}}>
+      <View style={styles.container}>
         <MyLoader />
       </View>
-      <View style={{height: 75, marginHorizontal: 20}}>
+      <View style={styles.container}>
         <MyLoader />
       </View>
-      <View style={{height: 75, marginHorizontal: 20}}>
+      <View style={styles.container}>
         <MyLoader />
       </View>
-      <View style={{height: 75, marginHorizontal: 20}}>
+      <View style={styles.container}>
         <MyLoader />
       </View>
-      <View style={{height: 75, marginHorizontal: 20}}>
+      <View style={styles.container}>
         <MyLoader />
       </View>
     </>
@@ -33,4 +33,6 @@ const Skeleton = () => {
 
 export default Skeleton;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {height: 75, marginHorizontal: 20},
+});

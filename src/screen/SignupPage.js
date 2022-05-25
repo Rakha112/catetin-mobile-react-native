@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -14,6 +15,8 @@ import {useNavigation} from '@react-navigation/native';
 import Button from '../components/Button';
 import Toast from 'react-native-toast-message';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import axios from 'axios';
+
 const SignupPage = () => {
   const navigation = useNavigation();
   const passwordRef = useRef(null);
@@ -21,6 +24,8 @@ const SignupPage = () => {
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  axios.defaults.withCredentials = true;
+
   const submitHandle = () => {
     if (username === '' || password === '') {
       Toast.show({
@@ -28,6 +33,37 @@ const SignupPage = () => {
         text1: 'Username dan password tidak boleh kosong',
         visibilityTime: 2000,
       });
+    } else {
+      axios
+        .post('https://catetinnote.herokuapp.com/signup', {
+          username: username,
+          password: password,
+        })
+        .then(response => {
+          if (response.data.alert === 2) {
+            Toast.show({
+              type: 'sukses',
+              text1: response.data.message,
+              visibilityTime: 2000,
+            });
+            navigation.replace('Login');
+          } else if (response.data.alert === 3) {
+            Toast.show({
+              type: 'warning',
+              text1: response.data.message,
+              visibilityTime: 2000,
+            });
+          } else {
+            Toast.show({
+              type: 'warning',
+              text1: response.data.message,
+              visibilityTime: 2000,
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err.response);
+        });
     }
   };
   return (
@@ -83,7 +119,12 @@ const SignupPage = () => {
           </View>
         </View>
         <View style={styles.bawah}>
-          <Button text={'Sign Up'} bgColor={'black'} textColor={'white'} />
+          <Button
+            text={'Sign Up'}
+            bgColor={'black'}
+            textColor={'white'}
+            submit={submitHandle}
+          />
           <Text style={styles.textBawah}>
             Belum punya akun ? silahkan&nbsp;
             <Text

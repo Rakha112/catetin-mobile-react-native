@@ -56,11 +56,12 @@ const App = () => {
         setLoading(true);
       }
     };
-    getLogin();
-    if (loading) {
+    if (!loading) {
+      getLogin();
+    } else {
       SplashScreen.hide();
     }
-  }, []);
+  }, [loading]);
 
   const initialState = {
     username: '',
