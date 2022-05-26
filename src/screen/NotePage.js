@@ -6,10 +6,10 @@ import {
   Platform,
   StatusBar,
   SafeAreaView,
-  TouchableWithoutFeedback,
   TextInput,
   Alert,
 } from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import React, {useRef, useCallback, useState} from 'react';
 import Ripple from 'react-native-material-ripple';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';

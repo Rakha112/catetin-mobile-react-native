@@ -6,9 +6,9 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
-  TouchableWithoutFeedback,
   TextInput,
 } from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import React, {useCallback, useRef, useState} from 'react';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';
 import Dot from '../assets/images/three-dots-vertical-svgrepo-com.svg';

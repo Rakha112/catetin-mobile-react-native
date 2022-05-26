@@ -1,4 +1,5 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import React from 'react';
 import NoteIcon from '../assets/images/note.svg';
 import {useNavigation} from '@react-navigation/native';
