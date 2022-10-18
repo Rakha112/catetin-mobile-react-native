@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 import {StatusBar} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {Provider} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
@@ -88,30 +89,33 @@ const App = () => {
     return null;
   } else {
     return (
-      <Provider store={store}>
-        <StatusBar
-          backgroundColor="transparent"
-          translucent={true}
-          barStyle="dark-content"
-        />
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName={login ? 'Home' : 'Welcome'}
-            screenOptions={{
-              headerShown: false,
-              ...TransitionPresets.SlideFromRightIOS,
-            }}>
-            <Stack.Screen name="Welcome" component={WelcomePage} />
-            <Stack.Screen name="Login" component={LoginPage} />
-            <Stack.Screen name="Signup" component={SignupPage} />
-            <Stack.Screen name="Home" component={HomePage} />
-            <Stack.Screen name="Note" component={NotePage} />
-            <Stack.Screen name="NewNote" component={NewNotePage} />
-            <Stack.Screen name="Coba" component={CobaPage} />
-          </Stack.Navigator>
-        </NavigationContainer>
-        <ToastComponent />
-      </Provider>
+      // eslint-disable-next-line react-native/no-inline-styles
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Provider store={store}>
+          <StatusBar
+            backgroundColor="transparent"
+            translucent={true}
+            barStyle="dark-content"
+          />
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName={login ? 'Home' : 'Welcome'}
+              screenOptions={{
+                headerShown: false,
+                ...TransitionPresets.SlideFromRightIOS,
+              }}>
+              <Stack.Screen name="Welcome" component={WelcomePage} />
+              <Stack.Screen name="Login" component={LoginPage} />
+              <Stack.Screen name="Signup" component={SignupPage} />
+              <Stack.Screen name="Home" component={HomePage} />
+              <Stack.Screen name="Note" component={NotePage} />
+              <Stack.Screen name="NewNote" component={NewNotePage} />
+              <Stack.Screen name="Coba" component={CobaPage} />
+            </Stack.Navigator>
+          </NavigationContainer>
+          <ToastComponent />
+        </Provider>
+      </GestureHandlerRootView>
     );
   }
 };

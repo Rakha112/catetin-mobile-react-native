@@ -6,8 +6,7 @@ import Animated, {
   Easing,
   withTiming,
 } from 'react-native-reanimated';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-
+import Ripple from 'react-native-material-ripple';
 const Button = ({text, bgColor, textColor, submit}) => {
   const scaleValue = useSharedValue(1);
   const animatedStyles = useAnimatedStyle(() => {
@@ -24,7 +23,7 @@ const Button = ({text, bgColor, textColor, submit}) => {
   });
   return (
     <Animated.View style={animatedStyles}>
-      <TouchableOpacity
+      <Ripple
         onPressIn={() => {
           scaleValue.value = 0.95;
         }}
@@ -40,7 +39,7 @@ const Button = ({text, bgColor, textColor, submit}) => {
         {/* <View > */}
         <Text style={[styles.text, {color: textColor}]}>{text}</Text>
         {/* </View> */}
-      </TouchableOpacity>
+      </Ripple>
     </Animated.View>
   );
 };
