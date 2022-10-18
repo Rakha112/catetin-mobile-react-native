@@ -10,6 +10,7 @@ import {
   ScrollView,
   Alert,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useCallback, useRef, useEffect, useState} from 'react';
 import Dot from '../assets/images/three-dots-vertical-svgrepo-com.svg';
@@ -22,7 +23,6 @@ import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import {connect} from 'react-redux';
-import Skeleton from '../components/Skeleton';
 
 const HomePage = ({refresh, setRefresh}) => {
   const navigation = useNavigation();
@@ -83,15 +83,6 @@ const HomePage = ({refresh, setRefresh}) => {
     });
   };
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getToken().then(res => {
-  //       setUsername(res.username);
-  //       getData(res.password, res.username).then(res => setData(res));
-  //     });
-  //   }, []),
-  // );
-
   useEffect(() => {
     if (refresh) {
       setRefresh(false);
@@ -137,6 +128,15 @@ const HomePage = ({refresh, setRefresh}) => {
         </Ripple>
       </View>
       <ScrollView
+        contentContainerStyle={
+          loading
+            ? {}
+            : {
+                justifyContent: 'center',
+                alignItems: 'center',
+                flex: 1,
+              }
+        }
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -161,7 +161,7 @@ const HomePage = ({refresh, setRefresh}) => {
             </View>
           )
         ) : (
-          <Skeleton />
+          <ActivityIndicator size={'large'} />
         )}
       </ScrollView>
       <ButtonNewNote />
