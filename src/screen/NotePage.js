@@ -9,7 +9,10 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {
+  ScrollView,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
 import React, {useRef, useCallback, useState} from 'react';
 import Ripple from 'react-native-material-ripple';
 import Arrow from '../assets/images/right-arrow-svgrepo-com.svg';
@@ -28,7 +31,8 @@ const NotePage = ({route, setRefresh}) => {
   const bottomSheetRef = useRef(null);
   const isiRef = useRef(null);
   const [editable, setEditable] = useState(false);
-  const [isiBaru, setIsiBaru] = useState('');
+  const [isiBaru, setIsiBaru] = useState(route.params.isi);
+  const [judulBaru, setJudulBaru] = useState(route.params.judul);
   const renderBackdrop = useCallback(
     props => (
       <BottomSheetBackdrop
@@ -57,6 +61,7 @@ const NotePage = ({route, setRefresh}) => {
       axios
         .put('https://catetinnote.herokuapp.com/note/update', {
           judul: route.params.judul,
+          judulBaru: judulBaru,
           isi: isiBaru,
           user: res.username,
           token: res.password,
@@ -135,7 +140,7 @@ const NotePage = ({route, setRefresh}) => {
               createSaveAlert();
             } else {
               navigaton.pop();
-              isiRef.current.blur();
+              // isiRef.current.blur();
             }
           }}>
           <View style={styles.arrow}>
@@ -145,31 +150,51 @@ const NotePage = ({route, setRefresh}) => {
         <Ripple
           onPress={() => {
             bottomSheetRef.current.expand();
-            isiRef.current.blur();
+            // isiRef.current.blur();
           }}
           style={styles.threeDots}>
           <Dot width={25} height={25} fill={'black'} />
         </Ripple>
       </View>
-      <Text
-        style={[
-          styles.textInput,
-          {borderBottomWidth: 1, borderBottomColor: 'grey', paddingBottom: 10},
-        ]}>
-        {route.params.judul}
-      </Text>
       <TextInput
+        onChangeText={e => setJudulBaru(e)}
+        defaultValue={route.params.judul}
         editable={editable}
-        ref={isiRef}
-        placeholder="Isikan note di sini..."
-        defaultValue={route.params.isi}
-        multiline={true}
-        onChangeText={e => setIsiBaru(e)}
         style={[
           styles.textInput,
-          {textAlignVertical: 'top', maxHeight: '80%', height: '80%'},
+          {
+            borderBottomWidth: 1,
+            borderBottomColor: 'grey',
+            paddingBottom: 10,
+          },
         ]}
       />
+      {editable ? (
+        <TextInput
+          editable={editable}
+          ref={isiRef}
+          placeholder="Isikan note di sini..."
+          defaultValue={route.params.isi}
+          multiline={true}
+          onChangeText={e => setIsiBaru(e)}
+          style={[
+            styles.textInput,
+            {
+              textAlignVertical: 'top',
+              maxHeight: '85%',
+              height: '85%',
+            },
+          ]}
+        />
+      ) : (
+        <ScrollView
+          style={{maxHeight: '85%', height: '85%'}}
+          showsVerticalScrollIndicator={false}>
+          <View>
+            <Text style={[styles.textInput]}>{route.params.isi}</Text>
+          </View>
+        </ScrollView>
+      )}
       <BottomSheet
         enablePanDownToClose={true}
         index={-1}
@@ -181,6 +206,7 @@ const NotePage = ({route, setRefresh}) => {
             <Ripple
               style={styles.tombol}
               onPress={() => {
+                console.log(judulBaru);
                 setEditable(false);
                 bottomSheetRef.current.close();
                 editHandle();
@@ -265,8 +291,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textInput: {
+    padding: 0,
     marginHorizontal: 40,
-    fontFamily: 'Pippins-Regular',
+    fontFamily: 'Poppins-Regular',
     fontSize: 18,
     color: 'black',
   },
