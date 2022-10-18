@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     width: 300,
     marginTop: 10,
+    padding: 10,
     paddingLeft: 25,
   },
   bawah: {flex: 2, justifyContent: 'center', alignItems: 'center'},

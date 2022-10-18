@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   textToast: {
-    fontFamily: 'Rubik-Bold',
+    fontFamily: 'Poppins-Bold',
     color: '#FFF',
   },
 });

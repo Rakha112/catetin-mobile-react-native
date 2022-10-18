@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginHorizontal: 40,
-    fontFamily: 'Pippins-Regular',
+    fontFamily: 'Poppins-Regular',
     fontSize: 18,
   },
   textButton: {
