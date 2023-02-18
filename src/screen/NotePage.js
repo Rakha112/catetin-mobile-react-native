@@ -59,7 +59,7 @@ const NotePage = ({route, setRefresh}) => {
   const editHandle = () => {
     getToken().then(res => {
       axios
-        .put('https://catetinnote.herokuapp.com/note/update', {
+        .put('https://catetinapi.rakhawibowo.me/note/update', {
           judul: route.params.judul,
           judulBaru: judulBaru,
           isi: isiBaru,
@@ -80,7 +80,7 @@ const NotePage = ({route, setRefresh}) => {
   const deleteHandle = () => {
     getToken().then(res => {
       axios
-        .delete('https://catetinnote.herokuapp.com/note/delete', {
+        .delete('https://catetinapi.rakhawibowo.me/note/delete', {
           data: {
             judul: route.params.judul,
             isi: route.params.isi,

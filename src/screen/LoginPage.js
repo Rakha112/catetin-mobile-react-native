@@ -60,7 +60,7 @@ const LoginPage = ({setUsernameGlobal}) => {
       });
     } else {
       axios
-        .post('https://catetinnote.herokuapp.com/login/mobile', {
+        .post('https://catetinapi.rakhawibowo.me/login/mobile', {
           username: username,
           password: password,
         })

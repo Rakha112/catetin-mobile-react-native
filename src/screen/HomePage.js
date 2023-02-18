@@ -55,7 +55,7 @@ const HomePage = ({refresh, setRefresh}) => {
   };
 
   const getData = async (token, username2) => {
-    const request = await axios.get('https://catetinnote.herokuapp.com/note', {
+    const request = await axios.get('https://catetinapi.rakhawibowo.me/note', {
       params: {
         token: token,
         user: username2,
@@ -66,7 +66,7 @@ const HomePage = ({refresh, setRefresh}) => {
 
   const logoutHandle = async () => {
     await Keychain.resetInternetCredentials('token');
-    await axios.get('https://catetinnote.herokuapp.com/logout').then(res => {
+    await axios.get('https://catetinapi.rakhawibowo.me/logout').then(res => {
       if (res.data.logout) {
         navigation.replace('Welcome');
       }

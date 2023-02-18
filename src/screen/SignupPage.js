@@ -35,7 +35,7 @@ const SignupPage = () => {
       });
     } else {
       axios
-        .post('https://catetinnote.herokuapp.com/signup', {
+        .post('https://catetinapi.rakhawibowo.me/signup', {
           username: username,
           password: password,
         })

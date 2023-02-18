@@ -53,7 +53,7 @@ const NewNotePage = ({setRefresh}) => {
   const newHandle = () => {
     getToken().then(res => {
       axios
-        .post('https://catetinnote.herokuapp.com/note/insert', {
+        .post('https://catetinapi.rakhawibowo.me/note/insert', {
           judul: judul,
           isi: isi,
           user: res.username,

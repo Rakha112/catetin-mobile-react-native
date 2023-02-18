@@ -31,7 +31,7 @@ const App = () => {
             'Credentials successfully loaded for user ' + credentials.username,
           );
           axios
-            .get('https://catetinnote.herokuapp.com/profile', {
+            .get('https://catetinapi.rakhawibowo.me/profile', {
               params: {
                 token: credentials.password,
               },
